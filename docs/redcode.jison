@@ -15,8 +15,8 @@
 
 [a-zA-Z_]\w*    return 'LABEL'
 \d+             return 'NUMBER'
-\n+             return 'NEWLINE'
 
+\n     return 'NEWLINE'
 '.'    return '.'
 ','    return ','
 ':'    return ':'
