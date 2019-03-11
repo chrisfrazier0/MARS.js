@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "name": "jMARS",
+  "version": "0.0.0",
+  "description": "Javascript MARS, Memory Array Redcode Simulator",
+  "main": "./src/jmars.js",
+  "author": "Chris Frazier",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisfrazier0/jMARS.git"
+  },
+  "dependencies": {
+    "dev-server": "git+https://github.com/chrisfrazier0/dev-server.git#1.1.0",
+    "gulp": "^4.0.0",
+    "gulp-clean": "^0.4.0"
+  }
+}
