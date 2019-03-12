@@ -15,28 +15,31 @@
 
 [a-zA-Z_]\w*    return 'LABEL'
 \d+             return 'NUMBER'
-
-\n     return 'NEWLINE'
-'.'    return '.'
-','    return ','
-':'    return ':'
-'('    return '('
-')'    return ')'
-'+'    return '+'
-'-'    return '-'
-'*'    return '*'
-'/'    return '/'
-'%'    return '%'
-.      throw  'INVALID'
+\n              return 'NEWLINE'
+'.'             return '.'
+','             return ','
+':'             return ':'
+'('             return '('
+')'             return ')'
+'+'             return '+'
+'-'             return '-'
+'*'             return '*'
+'/'             return '/'
+'%'             return '%'
+<<EOF>>         return 'EOF'
+.               throw  'INVALID'
 
 /lex
 
 %ebnf
 %start redcode
+%left + -
+%left * / %
 %%
 
-redcode: line+ ;
-line: label? instruction? (NEWLINE | EOF) ;
+redcode: statement* EOF ;
+statement: label? instruction? eol ;
+eol: NEWLINE | EOF ;
 
 label: (LABEL | MODIFIER) ':'? ;
 
@@ -48,17 +51,12 @@ instruction
 ref: (MODE | '*')? expr ;
 
 expr
-    : term
-    | expr ('+' | '-') term ;
-
-term
-    : unary
-    | term ('*' | '/' | '%') unary ;
-
-unary: '-'? primary ;
-
+    : '-'? primary
+    | expr operator expr ;
 primary
     : NUMBER
     | LABEL
     | MODIFIER
     | '(' expr ')' ;
+operator
+    : '+' | '-' | '*' | '/' | '%' ;

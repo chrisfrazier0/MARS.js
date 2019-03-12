@@ -2,19 +2,26 @@ const make_regexp = function(str, fl) {
     return new RegExp(str.replace(/\s/g, ''), fl)
 }
 
+const modifiers = ['AB', 'BA', 'A', 'B', 'F', 'X', 'I']
+const opcodes = ['DAT', 'MOV', 'ADD', 'SUB', 'MUL', 'DIV',
+                 'MOD', 'JMP', 'JMZ', 'JMN', 'DJN', 'CMP',
+                 'SEQ', 'SNE', 'SLT', 'SPL', 'NOP']
+
 export default function lexer(str) {
     // Capture Groups
     // [1] Whitespace
     // [2] Comment
-    // [3] Identifier
-    // [4] Number
-    // [5] Punctuation
+    // [3] Label
+    // [4] Mode
+    // [5] Number
+    // [6] Punctuation
     const rx_token = make_regexp(String.raw`
         ( [\x20 \t \r \f \v]+ )
     |   ( ; [^\n]* )
     |   ( [a-z A-Z _] \w* )
+    |   ( [# $ @ { } < >] )
     |   ( \d+ )
-    |   ( [\n # $ @ { } < > . , : ( ) + \- * / %] )
+    |   ( [\n . , : ( ) + \- * / %] )
     `, 'y')
 
     let line = 1, col = 1
@@ -26,17 +33,29 @@ export default function lexer(str) {
 
     const scan = function() {
         if (rx_token.lastIndex >= str.length) {
-            return { type: 'EOF', value: 'EOF', line, col }
+            return { type: 'eof', value: 'eof', line, col }
         }
         const captives = rx_token.exec(str)
         if (captives === null) {
             throw new SyntaxError(`Unexpected character at ${line}:${col}`)
         } else if (captives[3] !== undefined) {
-            return token('IDENT', captives[3])
+            const v = captives[3].toUpperCase()
+            if (v === 'ORG') {
+                return token('org', captives[3])
+            } else if (v === 'END') {
+                return token('end', captives[3])
+            } else if (opcodes.indexOf(v) !== -1) {
+                return token('opcode', captives[3])
+            } else if (modifiers.indexOf(v) !== -1) {
+                return token('modifier', captives[3])
+            }
+            return token('label', captives[3])
         } else if (captives[4] !== undefined) {
-            return token('NUMBER', captives[4])
+            return token('mode', captives[4])
         } else if (captives[5] !== undefined) {
-            const t = token('PUNC', captives[5])
+            return token('number', captives[5])
+        } else if (captives[6] !== undefined) {
+            const t = token('punc', captives[6])
             if (t.value === '\n') {
                 line += 1
                 col = 1
