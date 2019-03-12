@@ -1,13 +1,11 @@
-const make_regexp = function(str, fl) {
-    return new RegExp(str.replace(/\s/g, ''), fl)
-}
+import { make_regexp } from './util.js'
 
 const modifiers = ['AB', 'BA', 'A', 'B', 'F', 'X', 'I']
 const opcodes = ['DAT', 'MOV', 'ADD', 'SUB', 'MUL', 'DIV',
                  'MOD', 'JMP', 'JMZ', 'JMN', 'DJN', 'CMP',
                  'SEQ', 'SNE', 'SLT', 'SPL', 'NOP']
 
-export default function lexer(str) {
+export default function lexer(str, macros = new Map()) {
     // Capture Groups
     // [1] Whitespace
     // [2] Comment
@@ -51,8 +49,12 @@ export default function lexer(str) {
                 return token('opcode', captives[3])
             } else if (modifiers.indexOf(v) !== -1) {
                 return token('modifier', captives[3])
+            } else if (macros.has(captives[3])) {
+                str = macros.get(captives[3]) + str.slice(rx_token.lastIndex)
+                rx_token.lastIndex = 0
+            } else {
+                return token('label', captives[3])
             }
-            return token('label', captives[3])
         } else if (captives[4] !== undefined) {
             return token('mode', captives[4])
         } else if (captives[5] !== undefined) {

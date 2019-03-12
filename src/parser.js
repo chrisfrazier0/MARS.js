@@ -1,3 +1,4 @@
+import preprocess from './preproc.js'
 import lexer from './lexer.js'
 
 let lex, la
@@ -147,8 +148,8 @@ infix('%', 20)
 prefix('-', 30)
 
 export default function parse(str) {
-    lex = lexer(str)
-    la = undefined
+    const input = preprocess(str)
+    lex = lexer(...input)
     advance()
     return statements()
 }
