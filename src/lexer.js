@@ -35,9 +35,12 @@ export default function lexer(str) {
         if (rx_token.lastIndex >= str.length) {
             return { type: 'eof', value: 'eof', line, col }
         }
+        const index = rx_token.lastIndex
         const captives = rx_token.exec(str)
         if (captives === null) {
-            throw new SyntaxError(`Unexpected character at ${line}:${col}`)
+            throw new SyntaxError(`Unexpected character "${str[index]}" at ${line}:${col}`)
+        } else if (captives[1] !== undefined || captives[2] !== undefined) {
+            col += captives[0].length
         } else if (captives[3] !== undefined) {
             const v = captives[3].toUpperCase()
             if (v === 'ORG') {

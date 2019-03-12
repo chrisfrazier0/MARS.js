@@ -21,7 +21,8 @@ const symbol = function(type, bp = 0) {
 
 const symbol_original = {
     nud() {
-        throw new SyntaxError('Expected expression')
+        const found = this.type === this.value ? this.type : this.type + ':' + this.value
+        throw new SyntaxError(`Expected expression but found "${found}" at ${this.line}:${this.col}`)
     },
     led() {
         throw new Error('Missing operator led() definition')
@@ -30,13 +31,17 @@ const symbol_original = {
 
 const advance = function(type) {
     if (type !== undefined && la.type !== type) {
-        throw new SyntaxError(`Expected "${type}"`)
+        const ex = type === '\n' ? 'instruction or EOL' : '"' + type + '"'
+        const found = la.type === la.value ? la.type : la.type + ':' + la.value
+        throw new SyntaxError(`Expected ${ex} but found "${found}" at ${la.line}:${la.col}`)
     }
     const s = la
     const t = lex()
     const o = symbol(t.type === 'punc' ? t.value : t.type)
     la = Object.create(o)
     la.value = t.value
+    la.col = t.col
+    la.line = t.line
     return s
 }
 
