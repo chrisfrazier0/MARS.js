@@ -1,7 +1,7 @@
 import preprocess from './preproc.js'
 import lexer from './lexer.js'
 
-let lex, la
+let lex, la, org, labels, count
 const symbol_table = {}
 const itself = function() { return this }
 
@@ -50,30 +50,33 @@ const statements = function() {
     const a = []
     while (la.type !== 'eof') {
         const s = statement()
-        if (s !== null) a.push(s)
+        if (s !== undefined) a.push(s)
+        if (la.type !== 'eof') advance('\n')
     }
     return a
 }
 
 const statement = function() {
     const s = Object.create(symbol('instruction'))
-    if (la.type === 'label' || la.type === 'modifier') {
-        s.value = null
-        s.label = advance().value
-        if (la.type === ':') advance()
-    }
     switch (la.type) {
     case 'org':
-        s.value = advance().value
-        s.a = reference(false)
+        advance()
+        org = expression()
         break
     case 'end':
-        s.value = advance().value
+        advance()
         if (la.type !== '\n' && la.type !== 'eof') {
-            s.a = reference(false)
+            org = expression()
         }
         break
+    case 'label':
+    case 'modifier':
+        labels.set(advance().value, count)
+        if (la.type === ':') advance()
+        if (la.type !== 'opcode') break
+    // eslint-ignore-nextline no-fallthrough
     case 'opcode':
+        count += 1
         s.value = advance().value
         if (la.type === '.') {
             advance()
@@ -84,17 +87,13 @@ const statement = function() {
             advance()
             s.b = reference()
         }
-        break
+        return s
     }
-    if (la.type !== 'eof') {
-        advance('\n')
-    }
-    return s.hasOwnProperty('value') ? s : null
 }
 
-const reference = function(mode = true) {
+const reference = function() {
     const r = Object.create(symbol('operand'))
-    if (mode && (la.type === 'mode' || la.type === '*')) {
+    if (la.type === 'mode' || la.type === '*') {
         r.mode = advance().value
     }
     r.value = expression()
@@ -134,7 +133,7 @@ symbol('number').nud = itself
 symbol('label').nud = itself
 symbol('modifier').nud = itself
 symbol('(').nud = function() {
-    const e = expression(0)
+    const e = expression()
     advance(')')
     return e
 }
@@ -150,6 +149,11 @@ prefix('-', 30)
 export default function parse(str) {
     const input = preprocess(str)
     lex = lexer(...input)
+    org = Object.create(symbol('number'))
+    org.value = 0
+    labels = new Map()
+    count = 0
     advance()
-    return statements()
+    const stmts = statements()
+    return [org, labels, stmts]
 }

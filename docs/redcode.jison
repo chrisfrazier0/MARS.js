@@ -37,17 +37,16 @@
 %left * / %
 %%
 
-redcode: statement* EOF ;
-statement: label? instruction? eol ;
+redcode: (statement eol)* ;
 eol: NEWLINE | EOF ;
 
-label: (LABEL | MODIFIER) ':'? ;
-
-instruction
+statement
     : ORG expr
     | END expr?
-    | OPCODE ('.' MODIFIER)? ref (',' ref)? ;
+    | label? instruction? ;
 
+label: (LABEL | MODIFIER) ':'? ;
+instruction: OPCODE ('.' MODIFIER)? ref (',' ref)? ;
 ref: (MODE | '*')? expr ;
 
 expr
