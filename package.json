@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/chrisfrazier0/jMARS.git"
   },
-  "dependencies": {
+  "devDependencies": {
     "dev-server": "git+https://github.com/chrisfrazier0/dev-server.git#1.1.0",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0"
