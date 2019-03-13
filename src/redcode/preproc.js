@@ -1,4 +1,4 @@
-import { make_regexp } from './util.js'
+import { make_regexp } from '../util.js'
 
 export default function preprocess(str) {
     // Capture Groups

@@ -1,4 +1,4 @@
-import { make_regexp } from './util.js'
+import { make_regexp } from '../util.js'
 
 const modifiers = ['AB', 'BA', 'A', 'B', 'F', 'X', 'I']
 const opcodes = ['DAT', 'MOV', 'ADD', 'SUB', 'MUL', 'DIV',
