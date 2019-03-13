@@ -50,7 +50,8 @@ const statements = function() {
     const a = []
     while (la.type !== 'eof') {
         const s = statement()
-        if (s !== undefined) a.push(s)
+        if (s === false) break
+        else if (s !== undefined) a.push(s)
         if (la.type !== 'eof') advance('\n')
     }
     return a
@@ -67,8 +68,9 @@ const statement = function() {
         advance()
         if (la.type !== '\n' && la.type !== 'eof') {
             org = expression()
+            if (la.type !== 'eof') advance('\n')
         }
-        break
+        return false
     case 'label':
     case 'modifier':
         labels.set(advance().value, count)
