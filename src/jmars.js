@@ -36,6 +36,15 @@ const state_original = {
         this.queue = []
         this.index = 0
     },
+
+    shuffle() {
+        let q = this.queue, n = q.length, i
+        while (n !== 0) {
+            i = Math.random() * n | 0
+            n -= 1
+            ;[ q[i], q[n] ] = [ q[n], q[i] ]
+        }
+    },
 }
 
 export default function jMARS(opts = {}) {
@@ -73,6 +82,7 @@ const jMARS_original = {
         const warrior = { name, org, code }
         const total = this.warriors.push(warrior)
         warrior.id = total-1
+        warrior.stage = this.stage.bind(this, warrior.id)
         this.warriors.lookup[name] = warrior
         return warrior
     },
@@ -120,5 +130,9 @@ const jMARS_original = {
             tasks: [mod(start + warrior.org, this.opts.coreSize)],
         })
         return start
+    },
+
+    stageAll() {
+        this.warriors.forEach(w => w.stage())
     },
 }
