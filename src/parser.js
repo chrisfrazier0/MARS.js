@@ -30,6 +30,12 @@ const symbol_original = {
     },
 }
 
+const create_symbol = function(type, value) {
+    const s = Object.create(symbol(type))
+    if (value !== undefined) s.value = value
+    return s
+}
+
 const advance = function(type) {
     if (type !== undefined && la.type !== type) {
         const ex = type === '\n' ? 'instruction or EOL' : '"' + type + '"'
@@ -38,9 +44,7 @@ const advance = function(type) {
     }
     const s = la
     const t = lex()
-    const o = symbol(t.type === 'punc' ? t.value : t.type)
-    la = Object.create(o)
-    la.value = t.value
+    la = create_symbol(t.type === 'punc' ? t.value : t.type, t.value)
     la.col = t.col
     la.line = t.line
     return s
@@ -58,7 +62,7 @@ const statements = function() {
 }
 
 const statement = function() {
-    const s = Object.create(symbol('instruction'))
+    let s
     switch (la.type) {
     case 'org':
         advance()
@@ -79,7 +83,7 @@ const statement = function() {
     // eslint-ignore-nextline no-fallthrough
     case 'opcode':
         count += 1
-        s.value = advance().value
+        s = create_symbol('instruction', advance().value)
         if (la.type === '.') {
             advance()
             s.modifier = advance('modifier').value
@@ -88,13 +92,16 @@ const statement = function() {
         if (la.type === ',') {
             advance()
             s.b = reference()
+        } else {
+            s.b = create_symbol('operand', create_symbol('number', 0))
+            s.b.mode = '$'
         }
         return s
     }
 }
 
 const reference = function() {
-    const r = Object.create(symbol('operand'))
+    const r = create_symbol('operand')
     if (la.type === 'mode' || la.type === '*') {
         r.mode = advance().value
     } else {
@@ -153,8 +160,7 @@ prefix('-', 30)
 export default function parse(str) {
     const input = preprocess(str)
     lex = lexer(...input)
-    org = Object.create(symbol('number'))
-    org.value = 0
+    org = create_symbol('number', 0)
     labels = new Map()
     count = 0
     advance()
