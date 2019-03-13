@@ -1,0 +1,6 @@
+;redcode-94nop
+;name Imp Gate
+;url http://corewar.co.uk/morrell/chapter1.txt
+
+gate EQU wait - 10
+wait JMP wait, <gate
