@@ -36,8 +36,9 @@ export default function compile(src) {
     const out = []
     for (; i < instructions.length; i++) {
         const inst = instructions[i]
+        const mod = (inst.modifier && inst.modifier.toUpperCase()) || '?'
         out.push({
-            op: inst.value + '.' + (inst.modifier || '?'),
+            op: inst.value.toUpperCase() + '.' + mod,
             ma: inst.a.mode,
             mb: inst.b.mode,
             a: evaluate(inst.a.value),
