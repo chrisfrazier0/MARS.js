@@ -95,6 +95,8 @@ const reference = function() {
     const r = Object.create(symbol('operand'))
     if (la.type === 'mode' || la.type === '*') {
         r.mode = advance().value
+    } else {
+        r.mode = '$'
     }
     r.value = expression()
     return r
