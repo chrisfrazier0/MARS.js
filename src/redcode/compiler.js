@@ -1,5 +1,10 @@
 import parse from './parser.js'
 
+const fDefault = ['DAT', 'NOP']
+const bDefault = ['JMP', 'JMZ', 'JMN', 'DJN', 'SPL']
+const iFinal = ['MOV', 'CMP', 'SEQ', 'SNE']
+const fFinal = ['ADD', 'SUB', 'MUL', 'DIV', 'MOD']
+
 export default function compile(src) {
     let [org, labels, instructions] = parse(src)
     let d, i = 0
@@ -36,9 +41,29 @@ export default function compile(src) {
     const out = []
     for (; i < instructions.length; i++) {
         const inst = instructions[i]
-        const mod = (inst.modifier && inst.modifier.toUpperCase()) || '?'
+        const op = inst.value.toUpperCase()
+        let mod = (inst.modifier && inst.modifier.toUpperCase()) || '?'
+
+        if (mod === '?') {
+            if (fDefault.indexOf(op) !== -1) {
+                mod = 'F'
+            } else if (bDefault.indexOf(op) !== -1) {
+                mod = 'B'
+            } else if (inst.a.mode === '#') {
+                mod = 'AB'
+            } else if (inst.b.mode === '#') {
+                mod = 'B'
+            } else if (iFinal.indexOf(op) !== -1) {
+                mod = 'I'
+            } else if (fFinal.indexOf(op) !== -1) {
+                mod = 'F'
+            } else {
+                mod = 'B' // SLT
+            }
+        }
+
         out.push({
-            op: inst.value.toUpperCase() + '.' + mod,
+            op: op + '.' + mod,
             ma: inst.a.mode,
             mb: inst.b.mode,
             a: evaluate(inst.a.value),
