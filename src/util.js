@@ -1,3 +1,6 @@
+export const WRITE = 1
+export const EXEC = 2
+
 export function make_regexp(str, fl) {
     return new RegExp(str.replace(/\s/g, ''), fl)
 }

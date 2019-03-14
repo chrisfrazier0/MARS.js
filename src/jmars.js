@@ -1,8 +1,6 @@
 import compile from './redcode/compiler.js'
-import { mod } from './util.js'
-
-const WRITE = 1
-const EXEC = 2
+import exec from './redcode/vm.js'
+import { WRITE, mod } from './util.js'
 
 const blank_cell = {
     id: 0,
@@ -23,6 +21,7 @@ const state = function(coreSize) {
     s.dirty = new Set()
     s.queue = []
     s.index = 0
+    s.cycles = 0
     return s
 }
 
@@ -35,6 +34,7 @@ const state_original = {
         this.dirty = new Set()
         this.queue = []
         this.index = 0
+        this.cycles = 0
     },
 
     shuffle() {
@@ -134,5 +134,22 @@ const jMARS_original = {
 
     stageAll() {
         this.warriors.forEach(w => w.stage())
+    },
+
+    step() {
+        exec(this.state, this.opts.threadLimit)
+    },
+
+    cycle() {
+        const s = this.state, tl = this.opts.threadLimit
+        if (s.queue.length < 2) {
+            exec(s, tl)
+        } else {
+            const c = s.cycles
+            while (s.queue.length > 1 && c === s.cycles) {
+                exec(s, tl)
+            }
+        }
+        return s.cycles
     },
 }

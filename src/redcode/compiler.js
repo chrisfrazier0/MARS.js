@@ -41,7 +41,7 @@ export default function compile(src) {
     const out = []
     for (; i < instructions.length; i++) {
         const inst = instructions[i]
-        const op = inst.value.toUpperCase()
+        let op = inst.value.toUpperCase()
         let mod = (inst.modifier && inst.modifier.toUpperCase()) || '?'
 
         if (mod === '?') {
@@ -61,6 +61,9 @@ export default function compile(src) {
                 mod = 'B' // SLT
             }
         }
+
+        // CMP is an alias for SEQ
+        if (op === 'CMP') op = 'SEQ'
 
         out.push({
             op: op + '.' + mod,
