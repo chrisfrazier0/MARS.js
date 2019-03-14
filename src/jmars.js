@@ -1,6 +1,6 @@
 import compile from './redcode/compiler.js'
 import exec from './redcode/vm.js'
-import { WRITE, mod } from './util.js'
+import { WRITE, EXEC, mod } from './util.js'
 
 const blank_cell = {
     id: 0,
@@ -153,3 +153,6 @@ const jMARS_original = {
         return s.cycles
     },
 }
+
+jMARS.WRITE = WRITE
+jMARS.EXEC = EXEC

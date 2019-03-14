@@ -92,9 +92,13 @@ const statement = function() {
         if (la.type === ',') {
             advance()
             s.b = reference()
-        } else {
+        } else if (s.value.toUpperCase() !== 'DAT') {
             s.b = create_symbol('operand', create_symbol('number', 0))
             s.b.mode = '$'
+        } else {
+            s.b = s.a
+            s.a = create_symbol('operand', create_symbol('number', 0))
+            s.a.mode = '$'
         }
         return s
     }

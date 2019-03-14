@@ -535,6 +535,7 @@ export default function exec(state, threadLimit) {
 
     // Update State
     if (next.length !== 0) {
+        core[ip].id = warrior.id
         core[ip].status = EXEC
         state.dirty.add(ip)
         warrior.tasks = warrior.tasks.concat(next)
