@@ -156,3 +156,4 @@ const jMARS_original = {
 
 jMARS.WRITE = WRITE
 jMARS.EXEC = EXEC
+jMARS.compile = compile
