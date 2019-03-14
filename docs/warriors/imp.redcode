@@ -1,6 +1,0 @@
-;redcode-94nop
-;name Imp
-;author A. K. Dewdney
-;url http://vyznev.net/corewar/guide.html
-
-imp MOV imp, imp+1
