@@ -1,4 +1,4 @@
-import { make_regexp } from '../util.js'
+// import { make_regexp } from '../util.js'
 
 const modifiers = ['AB', 'BA', 'A', 'B', 'F', 'X', 'I']
 const opcodes = ['DAT', 'MOV', 'ADD', 'SUB', 'MUL', 'DIV',
@@ -13,14 +13,17 @@ export default function lexer(str, macros = new Map()) {
     // [4] Mode
     // [5] Number
     // [6] Punctuation
-    const rx_token = make_regexp(String.raw`
-        ( [\x20 \t \r \f \v]+ )
-    |   ( ; [^\n]* )
-    |   ( [a-z A-Z _] \w* )
-    |   ( [# $ @ { } < >] )
-    |   ( \d+ )
-    |   ( [\n . , : ( ) + \- * / %] )
-    `, 'y')
+
+    // const rx_token = make_regexp(String.raw`
+    //     ( [\x20 \t \r \f \v]+ )
+    // |   ( ; [^\n]* )
+    // |   ( [a-z A-Z _] \w* )
+    // |   ( [# $ @ { } < >] )
+    // |   ( \d+ )
+    // |   ( [\n . , : ( ) + \- * / %] )
+    // `, 'y')
+
+    const rx_token = new RegExp(String.raw`([\x20\t\r\f\v]+)|(;[^\n]*)|([a-zA-Z_]\w*)|([#$@{}<>])|(\d+)|([\n.,:()+\-*/%])`, 'y')
 
     let line = 1, col = 1
     const token = function(type, value) {
