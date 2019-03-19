@@ -1,9 +1,9 @@
 const { terser } = require('rollup-plugin-terser')
 
 module.exports = {
-    input: './src/jmars.js',
+    input: './src/mars.js',
     output: {
-        file: './dist/jmars.js',
+        file: './dist/mars.js',
         format: 'esm',
     },
     plugins: [

@@ -47,14 +47,14 @@ const state_original = {
     },
 }
 
-export default function jMARS(opts = {}) {
+export default function MARS(opts = {}) {
     const defaults = {
         coreSize: 8000,
         minDistance: 100,
         instructionLimit: 100,
         threadLimit: 8000,
     }
-    const j = Object.create(jMARS_original)
+    const j = Object.create(MARS_original)
     j.opts = { ...defaults, ...opts }
     j.state = state(j.opts.coreSize)
     j.warriors = []
@@ -62,7 +62,7 @@ export default function jMARS(opts = {}) {
     return j
 }
 
-const jMARS_original = {
+const MARS_original = {
     clear() {
         this.state.clear()
         this.warriors = []
@@ -154,6 +154,6 @@ const jMARS_original = {
     },
 }
 
-jMARS.WRITE = WRITE
-jMARS.EXEC = EXEC
-jMARS.compile = compile
+MARS.WRITE = WRITE
+MARS.EXEC = EXEC
+MARS.compile = compile

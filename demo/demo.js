@@ -1,4 +1,4 @@
-import jMARS from './lib/jmars.js'
+import MARS from './lib/mars.js'
 
 const CHANG = `
     ;redcode-94nop
@@ -42,7 +42,7 @@ ctx.lineWidth = 1
 ctx.fillStyle = '#111111'
 ctx.fillRect(0, 0, 798, 497)
 
-const mars = jMARS()
+const mars = MARS()
 mars.load('CHANG1', CHANG)
 mars.load('MICE', MICE)
 mars.stageAll()
@@ -59,7 +59,7 @@ const render = function() {
             ctx.fillStyle = '#56CCF2'
             ctx.strokeStyle = '#56CCF2'
         }
-        if (cell.status === jMARS.WRITE) {
+        if (cell.status === MARS.WRITE) {
             ctx.fillStyle = '#111111'
             ctx.fillRect(x, y, 7, 7)
             x += 1
@@ -71,7 +71,7 @@ const render = function() {
             ctx.lineTo(x+5,y)
             ctx.stroke()
             ctx.closePath()
-        } else if (cell.status === jMARS.EXEC) {
+        } else if (cell.status === MARS.EXEC) {
             ctx.fillRect(x, y, 7, 7)
         }
         mars.state.dirty.delete(addr)
