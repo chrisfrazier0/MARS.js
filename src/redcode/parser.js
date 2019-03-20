@@ -18,6 +18,10 @@ const symbol = function(type, bp = 0) {
 }
 
 const symbol_original = {
+    std() {
+        const found = this.type === this.value ? this.type : this.type + ':' + this.value
+        throw new SyntaxError(`Expected instruction but found "${found}" at ${this.line}:${this.col}`)
+    },
     nud() {
         const found = this.type === this.value ? this.type : this.type + ':' + this.value
         throw new SyntaxError(`Expected expression but found "${found}" at ${this.line}:${this.col}`)
@@ -35,7 +39,7 @@ const create_symbol = function(type, value) {
 
 const advance = function(type) {
     if (type !== undefined && la.type !== type) {
-        const ex = type === '\n' ? 'instruction or EOL' : '"' + type + '"'
+        const ex = type === '\n' ? 'EOL' : '"' + type + '"'
         const found = la.type === la.value ? la.type : la.type + ':' + la.value
         throw new SyntaxError(`Expected ${ex} but found "${found}" at ${la.line}:${la.col}`)
     }
@@ -50,55 +54,44 @@ const advance = function(type) {
 const statements = function() {
     const a = []
     while (la.type !== 'eof') {
-        const s = statement()
+        const s = advance().std()
         if (s === false) break
         else if (s !== undefined) a.push(s)
-        if (la.type !== 'eof') advance('\n')
     }
     return a
 }
 
-const statement = function() {
-    let s
-    switch (la.type) {
-    case 'org':
-        advance()
-        org = expression()
-        break
-    case 'end':
-        advance()
-        if (la.type !== '\n' && la.type !== 'eof') {
-            org = expression()
-            if (la.type !== 'eof') advance('\n')
-        }
-        return false
-    case 'label':
-    case 'modifier':
-        labels.set(advance().value, count)
-        if (la.type === ':') advance()
-        if (la.type !== 'opcode') break
-    // eslint-ignore-nextline no-fallthrough
-    case 'opcode':
-        count += 1
-        s = create_symbol('instruction', advance().value)
-        if (la.type === '.') {
-            advance()
-            s.modifier = advance('modifier').value
-        }
-        s.a = reference()
-        if (la.type === ',') {
-            advance()
-            s.b = reference()
-        } else if (s.value.toUpperCase() !== 'DAT') {
-            s.b = create_symbol('operand', create_symbol('number', 0))
-            s.b.mode = '$'
-        } else {
-            s.b = s.a
-            s.a = create_symbol('operand', create_symbol('number', 0))
-            s.a.mode = '$'
-        }
-        return s
+const label = function() {
+    labels.set(this.value, count)
+    if (la.type === ':') advance()
+    if (la.type === 'opcode') {
+        return advance().std()
+    } else if (la.type !== 'eof') {
+        advance('\n')
     }
+}
+
+const opcode = function() {
+    count += 1
+    const s = create_symbol('instruction', this.value)
+    if (la.type === '.') {
+        advance()
+        s.modifier = advance('modifier').value
+    }
+    s.a = reference()
+    if (la.type === ',') {
+        advance()
+        s.b = reference()
+    } else if (s.value.toUpperCase() !== 'DAT') {
+        s.b = create_symbol('operand', create_symbol('number', 0))
+        s.b.mode = '$'
+    } else {
+        s.b = s.a
+        s.a = create_symbol('operand', create_symbol('number', 0))
+        s.a.mode = '$'
+    }
+    if (la.type !== 'eof') advance('\n')
+    return s
 }
 
 const reference = function() {
@@ -140,6 +133,23 @@ const prefix = function(type, bp) {
     }
     return s
 }
+
+symbol('org').std = function() {
+    org = expression()
+    if (la.type !== 'eof') advance('\n')
+}
+symbol('end').std = function() {
+    if (la.type !== '\n' && la.type !== 'eof') {
+        org = expression()
+        if (la.type !== 'eof') advance('\n')
+    }
+    return false
+}
+
+symbol('label').std = label
+symbol('modifier').std = label
+symbol('opcode').std = opcode
+symbol('\n').std = function() {}
 
 symbol('number').nud = itself
 symbol('label').nud = itself
