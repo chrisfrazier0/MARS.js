@@ -73,17 +73,22 @@ const MARS_original = {
     },
 
     load(name, src) {
-        let prefix = name, suffix = 2
-        while (this.warriors.lookup[name] !== undefined) {
-            name = prefix + suffix
-            suffix += 1
+        if (src === undefined) {
+            [name, src] = [src, name]
         }
 
-        const input = preprocess(src)
+        const [srcname, ...input] = preprocess(src)
         const ast = parse(lexer(...input))
         const [org, code] = compile(...ast)
         if (code.length > this.opts.instructionLimit) {
             throw new Error('Total instructions cannot exceed ' + this.opts.instructionLimit)
+        }
+
+        name = name || srcname || 'Nameless'
+        let prefix = name, suffix = 2
+        while (this.warriors.lookup[name] !== undefined) {
+            name = prefix + suffix
+            suffix += 1
         }
 
         const warrior = { name, org, code }

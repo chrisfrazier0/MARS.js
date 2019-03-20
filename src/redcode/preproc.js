@@ -1,4 +1,9 @@
 export default function preprocess(str) {
+    let name, match = str.match(/^[\x20\t\r\f\v]*;[\x20\t\r\f\v]*name\x20(.*)$/m)
+    if (match !== null) {
+        name = match[1].trim()
+    }
+
     // Capture Groups
     // [1] Label
     // [2] Macro
@@ -19,7 +24,7 @@ export default function preprocess(str) {
 
     const rx_macro = new RegExp(String.raw`[\x20\t\r\f\v]*([a-z_]\w*)[\x20\t\r\f\v]*:?[\x20\t\r\f\v]*EQU\x20([^\n]*)`, 'ig')
 
-    let match, index = 0, input = ''
+    let index = 0, input = ''
     const macros = new Map()
     while ((match = rx_macro.exec(str))) {
         macros.set(match[1], match[2])
@@ -28,5 +33,5 @@ export default function preprocess(str) {
     }
     input += str.slice(index)
 
-    return [input, macros]
+    return [name, input, macros]
 }

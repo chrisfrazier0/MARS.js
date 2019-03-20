@@ -1,51 +1,15 @@
 import MARS from './lib/mars.js'
 
-const CHANG = `
-    ;redcode-94nop
-    ;name CHANG1
-    ;author Morrison J. Chang
-
-    jmp 4
-    mov 2, -1
-    jmp -1
-    dat 9
-    spl -2
-    spl 4
-    add #-16, -3
-    mov -4, @-4
-    jmp -4
-    spl 2
-    jmp -1
-    mov 0, 1`
-
-const MICE = `
-    ;redcode-94nop
-    ;name MICE
-    ;author Chip Wendell
-
-    jmp 2
-    dat 0
-    mov #12, -1
-    mov @-2, <5
-    djn -1, -3
-    spl @3
-    add #653, 2
-    jmz -5, -6
-    dat 833`
-
+const mars = MARS()
 const canvas = document.createElement('canvas')
 const ctx = canvas.getContext('2d')
+
 document.getElementById('demo').appendChild(canvas)
 canvas.width = 798
 canvas.height = 497
 ctx.lineWidth = 1
 ctx.fillStyle = '#111111'
 ctx.fillRect(0, 0, 798, 497)
-
-const mars = MARS()
-mars.load('CHANG1', CHANG)
-mars.load('MICE', MICE)
-mars.stageAll()
 
 const render = function() {
     mars.state.dirty.forEach(addr => {
@@ -86,20 +50,51 @@ const render = function() {
     }
 }
 
-window.mars = mars
-window.pause = false
+mars.load(`;redcode-94nop
+           ;name CHANG1
+           ;author Morrison J. Chang
 
+           jmp 4
+           mov 2, -1
+           jmp -1
+           dat 9
+           spl -2
+           spl 4
+           add #-16, -3
+           mov -4, @-4
+           jmp -4
+           spl 2
+           jmp -1
+           mov 0, 1`)
+
+mars.load(`;redcode-94nop
+           ;name MICE
+           ;author Chip Wendell
+
+           jmp 2
+           dat 0
+           mov #12, -1
+           mov @-2, <5
+           djn -1, -3
+           spl @3
+           add #653, 2
+           jmz -5, -6
+           dat 833`)
+
+mars.stageAll()
 ;(function loop() {
-    if (window.pause === true) {
-        return
+    if (window.pause !== true) {
+        let n = 50
+        while (n > 0 && mars.state.queue.length > 1) {
+            mars.cycle()
+            n -= 1
+        }
+        render()
     }
-    let n = 50
-    while (n > 0 && mars.state.queue.length > 1) {
-        mars.cycle()
-        n -= 1
-    }
-    render()
     if (mars.state.queue.length > 1) {
         requestAnimationFrame(loop)
     }
 })()
+
+window.mars = mars
+window.pause = false
