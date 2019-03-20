@@ -86,8 +86,13 @@ const render = function() {
     }
 }
 
-render()
+window.mars = mars
+window.pause = false
+
 ;(function loop() {
+    if (window.pause === true) {
+        return
+    }
     let n = 50
     while (n > 0 && mars.state.queue.length > 1) {
         mars.cycle()
@@ -98,5 +103,3 @@ render()
         requestAnimationFrame(loop)
     }
 })()
-
-window.mars = mars
