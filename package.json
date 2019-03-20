@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "MARS.js",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Javascript MARS, Memory Array Redcode Simulator",
   "main": "./dist/mars.js",
   "module": "./dist/mars.esm.js",

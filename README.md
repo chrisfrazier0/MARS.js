@@ -26,7 +26,7 @@ leaving the victorious program in sole possession of the core.
 
 With [npm][3] installed, run
 ```
-$ npm install --save git+https://github.com/chrisfrazier0/MARS.js.git
+$ npm install --save git+https://github.com/chrisfrazier0/MARS.js.git#0.0.1
 ```
 
 
