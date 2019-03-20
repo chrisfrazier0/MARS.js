@@ -1,3 +1,4 @@
+const rename = require('gulp-rename')
 const changed = require('gulp-changed')
 const clean = require('gulp-clean')
 
@@ -18,7 +19,8 @@ module.exports = function(gulp) {
         .pipe(changed('./demo/lib'))
         .pipe(gulp.dest('./demo/lib')))
 
-    gulp.task('copy:dist', () => gulp.src('./dist/**/*')
+    gulp.task('copy:dist', () => gulp.src('./dist/mars.esm.js')
+        .pipe(rename('mars.js'))
         .pipe(gulp.dest('./demo/lib')))
 
     gulp.task('copy:clean', () => gulp.src(path, src_opts)
