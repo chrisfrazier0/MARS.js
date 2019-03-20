@@ -16,13 +16,7 @@ const render = function() {
         const cell = mars.state.core[addr]
         let x = (addr % 114) * 7
         let y = (addr / 114 | 0) * 7
-        if (cell.id === 0) {
-            ctx.fillStyle = '#EB5757'
-            ctx.strokeStyle = '#EB5757'
-        } else {
-            ctx.fillStyle = '#56CCF2'
-            ctx.strokeStyle = '#56CCF2'
-        }
+        ctx.fillStyle = ctx.strokeStyle = (cell.id === 0 ? '#EB5757' : '#56CCF2')
         if (cell.status === MARS.WRITE) {
             ctx.fillStyle = '#111111'
             ctx.fillRect(x, y, 7, 7)
@@ -53,7 +47,6 @@ const render = function() {
 mars.load(`;redcode-94nop
            ;name CHANG1
            ;author Morrison J. Chang
-
            jmp 4
            mov 2, -1
            jmp -1
@@ -70,7 +63,6 @@ mars.load(`;redcode-94nop
 mars.load(`;redcode-94nop
            ;name MICE
            ;author Chip Wendell
-
            jmp 2
            dat 0
            mov #12, -1
