@@ -99,7 +99,7 @@ const MARS_original = {
         return warrior
     },
 
-    stage(warrior) {
+    stage(warrior, start) {
         warrior = typeof warrior === 'string'
                 ? this.warriors.lookup[warrior]
                 : this.warriors[warrior]
@@ -107,20 +107,22 @@ const MARS_original = {
             throw new Error(`Failed to stage unknown warrior`)
         }
 
-        let iter = 0, gap = 0, start
-        while (gap < this.opts.minDistance) {
-            iter += 1
-            if (iter > 100) {
-                throw new Error(`Unable to stage warrior "${warrior.name}"`)
+        if (start === undefined) {
+            let iter = 0, gap = 0
+            while (gap < this.opts.minDistance) {
+                iter += 1
+                if (iter > 100) {
+                    throw new Error(`Unable to stage warrior "${warrior.name}"`)
+                }
+                start = Math.random() * this.opts.coreSize | 0
+                gap = Infinity
+                this.state.queue.forEach(w => {
+                    const d1 = mod(w.start - start, this.opts.coreSize)
+                    const d2 = mod(start - w.start, this.opts.coreSize)
+                    if (d1 < gap) gap = d1
+                    if (d2 < gap) gap = d2
+                })
             }
-            start = Math.random() * this.opts.coreSize | 0
-            gap = Infinity
-            this.state.queue.forEach(w => {
-                const d1 = mod(w.start - start, this.opts.coreSize)
-                const d2 = mod(start - w.start, this.opts.coreSize)
-                if (d1 < gap) gap = d1
-                if (d2 < gap) gap = d2
-            })
         }
 
         warrior.code.forEach((inst, i) => {
