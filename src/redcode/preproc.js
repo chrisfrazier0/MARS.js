@@ -1,5 +1,3 @@
-// import { make_regexp } from '../util.js'
-
 export default function preprocess(str) {
     // Capture Groups
     // [1] Label

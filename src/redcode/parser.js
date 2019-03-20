@@ -1,6 +1,3 @@
-import preprocess from './preproc.js'
-import lexer from './lexer.js'
-
 let lex, la, org, labels, count
 const symbol_table = {}
 const itself = function() { return this }
@@ -161,9 +158,8 @@ infix('%', 20)
 
 prefix('-', 30)
 
-export default function parse(str) {
-    const input = preprocess(str)
-    lex = lexer(...input)
+export default function parse(input) {
+    lex = input
     org = create_symbol('number', 0)
     labels = new Map()
     count = 0

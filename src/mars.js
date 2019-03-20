@@ -1,3 +1,6 @@
+import preprocess from './redcode/preproc.js'
+import lexer from './redcode/lexer.js'
+import parse from './redcode/parser.js'
 import compile from './redcode/compiler.js'
 import exec from './redcode/vm.js'
 import { WRITE, EXEC, mod } from './util.js'
@@ -75,10 +78,14 @@ const MARS_original = {
             name = prefix + suffix
             suffix += 1
         }
-        const [org, code] = compile(src)
+
+        const input = preprocess(src)
+        const ast = parse(lexer(...input))
+        const [org, code] = compile(...ast)
         if (code.length > this.opts.instructionLimit) {
             throw new Error('Total instructions cannot exceed ' + this.opts.instructionLimit)
         }
+
         const warrior = { name, org, code }
         const total = this.warriors.push(warrior)
         warrior.id = total-1
@@ -99,7 +106,7 @@ const MARS_original = {
         while (gap < this.opts.minDistance) {
             iter += 1
             if (iter > 100) {
-                throw new Error(`Unable to load warrior "${warrior.name}"`)
+                throw new Error(`Unable to stage warrior "${warrior.name}"`)
             }
             start = Math.random() * this.opts.coreSize | 0
             gap = Infinity
@@ -156,4 +163,3 @@ const MARS_original = {
 
 MARS.WRITE = WRITE
 MARS.EXEC = EXEC
-MARS.compile = compile

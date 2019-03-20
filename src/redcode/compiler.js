@@ -1,14 +1,10 @@
-import parse from './parser.js'
-
 const fDefault = ['DAT', 'NOP']
 const bDefault = ['JMP', 'JMZ', 'JMN', 'DJN', 'SPL']
 const iFinal = ['MOV', 'CMP', 'SEQ', 'SNE']
 const fFinal = ['ADD', 'SUB', 'MUL', 'DIV', 'MOD']
 
-export default function compile(src) {
-    let [org, labels, instructions] = parse(src)
+export default function compile(org, labels, instructions) {
     let d, i = 0
-
     const evaluate = function(expr) {
         switch (expr.type) {
             case 'number':
