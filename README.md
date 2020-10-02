@@ -1,6 +1,10 @@
 # MARS.js
 > Javascript MARS, Memory Array Redcode Simulator
 
+**NOTICE:** This project is not maintained, and many libraries it uses are outdated.
+
+## About
+
 [Core War][1] is a 1984 programming game created by D. G. Jones and A. K.
 Dewdney in which two or more battle programs (called "warriors") compete for
 control of a virtual computer. These battle programs are written in an abstract
