@@ -39,14 +39,14 @@ leaving the victorious program in sole possession of the core.
 
 With [npm][3] installed, run
 
-```
+```shell
 $ npm install --save git+https://github.com/chrisfrazier0/MARS.js.git#0.0.1
 ```
 
 ## Usage
 
 ```js
-const mars = require("MARS.js")();
+const mars = require('MARS.js')();
 mars.load(/* ... */);
 mars.stageAll();
 mars.cycle();
