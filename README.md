@@ -25,7 +25,7 @@ leaving the victorious program in sole possession of the core.
 
 ## MARS.js Overview
 
-- Demo available at: <https://gh.frazier.software/MARS.js/>
+- Demo available at: <https://lab.frazier.software/MARS.js/>
 - Compatible with node and browsers
 - Unopinionated, fast, bare-bones [ICWS'94][2] implementation.
 - Includes support for the commonly used experimental opcodes `SEQ`, `SNE`, and
